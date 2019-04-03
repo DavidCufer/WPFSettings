@@ -36,7 +36,7 @@ namespace SettingsWindow
         //convert settings to List<Setting> which is displayed
         private void ConvertSettingsToDisplay()
         {
-            var settingProperties = mySettings.GetType().GetProperties();
+            var settingProperties = mySettings.GetType().GetFields();
             List<object> settings = new List<object>();
 
             foreach(var property in settingProperties)
@@ -49,7 +49,7 @@ namespace SettingsWindow
         //convert settings back to format ready to be saved
         private void ConvertSettingsFromDisplay()
         {
-            var settingProperties = mySettings.GetType().GetProperties();
+            var settingProperties = mySettings.GetType().GetFields();
 
             for (int i = 0; i < settingProperties.Count(); i++)
             {
@@ -73,7 +73,6 @@ namespace SettingsWindow
                 {
                     settingProperties[i].SetValue(mySettings, value);
                 }
-
             }
         }
 
