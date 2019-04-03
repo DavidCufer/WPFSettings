@@ -30,12 +30,11 @@ namespace SettingsWindow
 
     public class MySettings : AppSettings<MySettings>
     {
-        public string test1 { get; set; }
-        public bool test2 { get; set; }
-        public string test3 { get; set; }
-        public string test4 { get; set; }
-        public string test5 { get; set; }
-        public double test6 { get; set; }
-
+        public string test1 = "";
+        public bool test2 = false;
+        public string test3 = "";
+        public string test4 = "";
+        public string test5 = "";
+        public string test6 = "";
     }
 }
