@@ -32,9 +32,11 @@ namespace SettingsWindow
     {
         public string test1 = "";
         public bool test2 = false;
-        public string test3 = "";
+        public double test3 = 2;
         public string test4 = "";
         public string test5 = "";
         public string test6 = "";
+        public int test7 = 23;
+
     }
 }
