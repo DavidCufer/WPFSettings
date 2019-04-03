@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ namespace SettingsWindow
 {
     /// <summary>
     /// Interaction logic for Settings.xaml
+    /// It populates DataGrid with settings declared in class MySettings using reflection
     /// </summary>
     public partial class Settings : Window
     {
@@ -56,17 +58,23 @@ namespace SettingsWindow
                var settingType= settingProperties[i].GetValue(mySettings).GetType();
                var value = SettingItems[i].SettingValue;
 
-
+                //check settings type
                 if (settingType == typeof(System.Double))
                 {
                     double convertedValue;
                     double.TryParse(value.ToString(), out convertedValue);
                     settingProperties[i].SetValue(mySettings, convertedValue);
                 }
-                else if(settingType == typeof(System.Boolean))
+                else if (settingType == typeof(System.Boolean))
                 {
                     bool convertedValue;
                     bool.TryParse(value.ToString(), out convertedValue);
+                    settingProperties[i].SetValue(mySettings, convertedValue);
+                }
+                else if (settingType == typeof(System.Int32))
+                {
+                    int convertedValue;
+                    int.TryParse(value.ToString(), out convertedValue);
                     settingProperties[i].SetValue(mySettings, convertedValue);
                 }
                 else
@@ -74,6 +82,20 @@ namespace SettingsWindow
                     settingProperties[i].SetValue(mySettings, value);
                 }
             }
+        }
+
+        //Validation for double values, it does not really check if the input is double
+        private void TextBoxDouble_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            e.Handled = !Regex.IsMatch(e.Text, @"^[0-9.-]+$");
+        }
+
+        //Validation for Integers,
+        private void TextBoxInt32_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            e.Handled = Regex.IsMatch(e.Text, "[^0-9-]+");
         }
 
         private void button_Cancel_Click(object sender, RoutedEventArgs e)

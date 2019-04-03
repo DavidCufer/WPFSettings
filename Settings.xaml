@@ -5,12 +5,39 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:SettingsWindow"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:template="SettingsWindow"
     Title="Settings"
     MinWidth="325"
     MinHeight="200"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     mc:Ignorable="d">
+    <Window.Resources>
+        <DataTemplate x:Key="stringTemplate">
+            <TextBox BorderThickness="0" Text="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        </DataTemplate>
+        <DataTemplate x:Key="boolTemplate">
+            <CheckBox IsChecked="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        </DataTemplate>
+        <DataTemplate x:Key="doubleTemplate">
+            <TextBox
+                BorderThickness="0"
+                PreviewTextInput="TextBoxDouble_PreviewTextInput"
+                Text="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        </DataTemplate>
+        <DataTemplate x:Key="int32Template">
+            <TextBox
+                BorderThickness="0"
+                PreviewTextInput="TextBoxInt32_PreviewTextInput"
+                Text="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+        </DataTemplate>
+        <local:MyTemplateSelector
+            x:Key="myDataTemplateSelector"
+            BoolTemplate="{StaticResource boolTemplate}"
+            DoubleTemplate="{StaticResource doubleTemplate}"
+            IntTemplate="{StaticResource int32Template}"
+            StringTemplate="{StaticResource stringTemplate}" />
+    </Window.Resources>
     <Grid x:Name="grid" MinWidth="320">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -36,10 +63,10 @@
                     Binding="{Binding SettingName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Header="Name"
                     IsReadOnly="True" />
-                <DataGridTextColumn
+                <DataGridTemplateColumn
                     Width="Auto"
                     MinWidth="150"
-                    Binding="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    CellTemplateSelector="{StaticResource myDataTemplateSelector}"
                     Header="Value"
                     IsReadOnly="False" />
             </DataGrid.Columns>
