@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:SettingsWindow"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:template="SettingsWindow"
@@ -31,11 +32,38 @@
                 PreviewTextInput="TextBoxInt32_PreviewTextInput"
                 Text="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
         </DataTemplate>
+        <DataTemplate x:Key="pathTemplate">
+            <DockPanel>
+                <TextBox
+                    Margin="0"
+                    Padding="0"
+                    HorizontalAlignment="Stretch"
+                    BorderThickness="0"
+                    Text="{Binding SettingValue.PathString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <Button
+                    Width="50"
+                    Margin="0"
+                    Padding="0"
+                    HorizontalAlignment="Right"
+                    Command="{Binding Path=SaveCommand}"
+                    Content="Browse"
+                    DockPanel.Dock="Right" />
+            </DockPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="comboTemplate">
+            <ComboBox
+                BorderThickness="0"
+                ItemsSource="{Binding Values, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                PreviewTextInput="TextBoxInt32_PreviewTextInput"
+                SelectedItem="{Binding SettingValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DataTemplate>
         <local:MyTemplateSelector
             x:Key="myDataTemplateSelector"
             BoolTemplate="{StaticResource boolTemplate}"
+            ComboTemplate="{StaticResource comboTemplate}"
             DoubleTemplate="{StaticResource doubleTemplate}"
             IntTemplate="{StaticResource int32Template}"
+            PathTemplate="{StaticResource pathTemplate}"
             StringTemplate="{StaticResource stringTemplate}" />
     </Window.Resources>
     <Grid x:Name="grid" MinWidth="320">
