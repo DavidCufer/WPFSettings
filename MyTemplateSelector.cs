@@ -15,6 +15,8 @@ namespace SettingsWindow
         public DataTemplate StringTemplate { get; set; }
         public DataTemplate DoubleTemplate { get; set; }
         public DataTemplate IntTemplate { get; set; }
+        public DataTemplate PathTemplate { get; set; }
+        public DataTemplate ComboTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -23,7 +25,7 @@ namespace SettingsWindow
                 return StringTemplate;
             }
 
-            var convertedItem = item as Setting;
+            var convertedItem = item as ISetting;
             var type = convertedItem.SettingValue.GetType();
 
             if (type == typeof(Boolean))
@@ -39,8 +41,19 @@ namespace SettingsWindow
             {
                 return IntTemplate;
             }
+            else if (type == typeof(FilePath))
+            {
+                return PathTemplate;
+            }
+            else if (type == typeof(FolderPath))
+            {
+                return PathTemplate;
+            }
+            else if (type.BaseType == typeof(Enum))
+            {
+                return ComboTemplate;
+            }
             else return StringTemplate;
         }
     }
-
 }

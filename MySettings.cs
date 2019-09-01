@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -30,13 +30,30 @@ namespace SettingsWindow
 
     public class MySettings : AppSettings<MySettings>
     {
-        public string test1 = "";
-        public bool test2 = false;
-        public double test3 = 2;
-        public string test4 = "";
-        public string test5 = "";
-        public string test6 = "";
-        public int test7 = 23;
+        [PropertyName("First setting")]
+        public string stringSetting = "abc";
+        public bool isTestEnabled = true;
+        public double doubleTest = 21.1;
+        [Browsable(false)]
+        public int hiddenSetting = 23;
+        [PropertyName("The important file")]
+        public FilePath filePathSetting = new FilePath(@"C:\\Users\Default\Settings.csproj");
+        public FolderPath folderPathSetting = new FolderPath(@"C:\\Users\Default\Settings");
+        public Laugh enumeration = Laugh.hehe;
+    }
 
+    public class PropertyName : Attribute
+    {
+        public PropertyName()
+        {
+
+        }
+
+        public PropertyName(string _displayName)
+        {
+            DisplayName = _displayName;
+        }
+
+        public string DisplayName { get; set; }
     }
 }

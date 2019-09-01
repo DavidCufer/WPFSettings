@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -13,6 +14,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Runtime.CompilerServices;
 
 namespace SettingsWindow
 {
@@ -23,35 +27,48 @@ namespace SettingsWindow
     public partial class Settings : Window
     {
         public MySettings settings { get; set; }
-        public List<Setting> SettingItems { get; set; }
+        public ObservableCollection<ISetting> SettingItems { get; set; }
         private MySettings mySettings;
 
         public Settings()
         {
             this.DataContext = this;
-            SettingItems = new List<Setting>();
+            SettingItems = new ObservableCollection<ISetting>();
+
             mySettings = MySettings.Load();
             this.ConvertSettingsToDisplay();
             InitializeComponent();
         }
-
+        
         //convert settings to List<Setting> which is displayed
         private void ConvertSettingsToDisplay()
         {
-            var settingProperties = mySettings.GetType().GetFields();
-            List<object> settings = new List<object>();
+            var settingProperties = mySettings.GetType().GetFields().Where(pi => !pi.GetCustomAttributes<BrowsableAttribute>().Contains(BrowsableAttribute.No)).ToList();
 
+                     List<object> settings = new List<object>();
+
+            SettingCreator settingCreator = new SettingCreator();
             foreach(var property in settingProperties)
             {
+               string  settingName = property.Name;
+                if (property.CustomAttributes.Count() > 0)
+                {
+                    var attribute = (PropertyName)property.GetCustomAttribute(typeof(PropertyName));
+                    if (attribute != null)
+                    {
+                        settingName = attribute.DisplayName;
+                    }
+                }
+
                 var value = property.GetValue(mySettings);
-                SettingItems.Add(new Setting() { SettingName = property.Name, SettingValue = value });
+                SettingItems.Add(settingCreator.CreateSetting(settingName, value));
             }
         }
 
         //convert settings back to format ready to be saved
         private void ConvertSettingsFromDisplay()
         {
-            var settingProperties = mySettings.GetType().GetFields();
+            var settingProperties = mySettings.GetType().GetFields().Where(pi => !pi.GetCustomAttributes<BrowsableAttribute>().Contains(BrowsableAttribute.No)).ToList();
 
             for (int i = 0; i < settingProperties.Count(); i++)
             {
@@ -76,6 +93,10 @@ namespace SettingsWindow
                     int convertedValue;
                     int.TryParse(value.ToString(), out convertedValue);
                     settingProperties[i].SetValue(mySettings, convertedValue);
+                }
+                else if (settingType.BaseType == typeof(System.Enum))
+                {
+                    settingProperties[i].SetValue(mySettings, value);
                 }
                 else
                 {
